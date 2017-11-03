@@ -3,6 +3,7 @@
  */
 import optimist from 'redux-optimist';
 import { combineReducers } from 'redux';
+import { createResponsiveStateReducer } from 'redux-responsive';
 import {
 	flow,
 	partialRight,
@@ -667,6 +668,13 @@ export function metaBoxes( state = defaultMetaBoxState, action ) {
 	}
 }
 
+// Create responsive reducer with lib default breakpoints excluding small where we are currently using 782.
+const responsive = createResponsiveStateReducer( {
+	extraSmall: 480,
+	small: 782,
+	medium: 992,
+	large: 1200,
+} );
 export const reusableBlocks = combineReducers( {
 	data( state = {}, action ) {
 		switch ( action.type ) {
@@ -730,5 +738,6 @@ export default optimist( combineReducers( {
 	saving,
 	notices,
 	metaBoxes,
+	responsive,
 	reusableBlocks,
 } ) );
