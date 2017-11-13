@@ -10,6 +10,7 @@ import {
 	findIndex,
 	isObjectLike,
 	find,
+	uniq,
 } from 'lodash';
 
 /**
@@ -20,7 +21,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { getBlockType } from './registration';
+import { getBlockType, getBlockTypes } from './registration';
 
 /**
  * Returns a block object given its type and attributes.
@@ -54,6 +55,48 @@ export function createBlock( name, blockAttributes = {} ) {
 		isValid: true,
 		attributes,
 	};
+}
+
+/**
+ * Returns an array of possible block transformations that could happen on the set of blocks received as argument.
+ *
+ * @param  {Array}  blocks Blocks array
+ * @return {Array}         Array of possible block transformations
+ */
+export function getPossibleBlockTransformations( blocks ) {
+	if ( ! blocks || ! blocks[ 0 ] ) {
+		return [];
+	}
+	const isMultiBlock = blocks.length > 1;
+	const sourceBlockName = blocks[ 0 ].name;
+
+	if ( isMultiBlock && ! every( blocks, ( block ) => ( block.name === sourceBlockName ) ) ) {
+		return [];
+	}
+
+	const blockType = getBlockType( sourceBlockName );
+	const blocksToBeTransformedFrom = reduce( getBlockTypes(), ( memo, type ) => {
+		const transformFrom = get( type, 'transforms.from', [] );
+		const transformation = find(
+			transformFrom,
+			t => t.type === 'block' && t.blocks.indexOf( sourceBlockName ) !== -1 &&
+				( ! isMultiBlock || t.isMultiBlock )
+		);
+		return transformation ? memo.concat( [ type.name ] ) : memo;
+	}, [] );
+	const blocksToBeTransformedTo = get( blockType, 'transforms.to', [] )
+		.reduce(
+			( memo, transformation ) =>
+				memo.concat( ! isMultiBlock || transformation.isMultiBlock ? transformation.blocks : [] ),
+			[]
+		);
+	const allowedBlocks = uniq( blocksToBeTransformedFrom.concat( blocksToBeTransformedTo ) )
+		.reduce( ( memo, name ) => {
+			const type = getBlockType( name );
+			return !! type ? memo.concat( type ) : memo;
+		}, [] );
+
+	return allowedBlocks;
 }
 
 /**

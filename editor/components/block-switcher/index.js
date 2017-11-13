@@ -2,14 +2,13 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { every, uniq, get, reduce, find } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 import { Dropdown, Dashicon, IconButton, Toolbar, NavigableMenu } from '@wordpress/components';
-import { getBlockType, getBlockTypes, switchToBlockType, BlockIcon } from '@wordpress/blocks';
+import { getBlockType, getPossibleBlockTransformations, switchToBlockType, BlockIcon } from '@wordpress/blocks';
 import { keycodes } from '@wordpress/utils';
 
 /**
@@ -25,41 +24,14 @@ import { getBlock } from '../../selectors';
 const { DOWN } = keycodes;
 
 function BlockSwitcher( { blocks, onTransform } ) {
-	if ( ! blocks || ! blocks[ 0 ] ) {
-		return null;
-	}
-	const isMultiBlock = blocks.length > 1;
-	const sourceBlockName = blocks[ 0 ].name;
-
-	if ( isMultiBlock && ! every( blocks, ( block ) => ( block.name === sourceBlockName ) ) ) {
-		return null;
-	}
-
-	const blockType = getBlockType( sourceBlockName );
-	const blocksToBeTransformedFrom = reduce( getBlockTypes(), ( memo, type ) => {
-		const transformFrom = get( type, 'transforms.from', [] );
-		const transformation = find(
-			transformFrom,
-			t => t.type === 'block' && t.blocks.indexOf( sourceBlockName ) !== -1 &&
-				( ! isMultiBlock || t.isMultiBlock )
-		);
-		return transformation ? memo.concat( [ type.name ] ) : memo;
-	}, [] );
-	const blocksToBeTransformedTo = get( blockType, 'transforms.to', [] )
-		.reduce(
-			( memo, transformation ) =>
-				memo.concat( ! isMultiBlock || transformation.isMultiBlock ? transformation.blocks : [] ),
-			[]
-		);
-	const allowedBlocks = uniq( blocksToBeTransformedFrom.concat( blocksToBeTransformedTo ) )
-		.reduce( ( memo, name ) => {
-			const type = getBlockType( name );
-			return !! type ? memo.concat( type ) : memo;
-		}, [] );
+	const allowedBlocks = getPossibleBlockTransformations( blocks );
 
 	if ( ! allowedBlocks.length ) {
 		return null;
 	}
+
+	const sourceBlockName = blocks[ 0 ].name;
+	const blockType = getBlockType( sourceBlockName );
 
 	return (
 		<Dropdown
