@@ -51,15 +51,14 @@ registerBlockType( 'core/latest-posts', {
 	edit: class extends Component {
 		constructor() {
 			super( ...arguments );
-			this.changePostsToShow = this.changePostsToShow.bind( this );
-
-			const { postToShow, order, orderBy, categories } = this.props.attributes;
 
 			this.state = {
 				latestPosts: null,
 			};
 
-			this.latestPostsRequest = getLatestPosts( postToShow, order, orderBy, categories );
+			const { postsToShow, order, orderBy, categories } = this.props.attributes;
+
+			this.latestPostsRequest = getLatestPosts( postsToShow, order, orderBy, categories );
 
 			this.latestPostsRequest
 				.then( latestPosts => this.setState( { latestPosts } ) );
@@ -83,17 +82,12 @@ registerBlockType( 'core/latest-posts', {
 				return;
 			}
 
-			const { postToShow, order, orderBy, categories } = nextProps.attributes;
+			const { postsToShow, order, orderBy, categories } = nextProps.attributes;
 
-			this.latestPostsRequest = getLatestPosts( postToShow, order, orderBy, categories );
+			this.latestPostsRequest = getLatestPosts( postsToShow, order, orderBy, categories );
 
 			this.latestPostsRequest
 				.then( latestPosts => this.setState( { latestPosts } ) );
-		}
-
-		changePostsToShow( postsToShow ) {
-			const { setAttributes } = this.props;
-			setAttributes( { postsToShow: parseInt( postsToShow, 10 ) || 0 } );
 		}
 
 		render() {
