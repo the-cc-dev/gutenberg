@@ -18,21 +18,23 @@ import { getBlock } from '../../selectors';
 import { replaceBlocks } from '../../actions';
 
 function BlockTransformations( { blocks, small = false, onTransform, onClick = noop } ) {
-	return getPossibleBlockTransformations( blocks ).map( ( { name, title, icon } ) => {
-		const shownText = sprintf( __( 'Turn into %s' ), title );
-		return <IconButton
-			key={ `transform-${ name } ` }
-			className="editor-block-settings-menu__control"
-			onClick={ ( event ) => {
-				onTransform( blocks, name );
-				onClick( event );
-			} }
-			icon={ icon }
-			label={ small ? shownText : undefined }
-		>
-			{ ! small && shownText }
-		</IconButton>;
-	} );
+	return <div className="editor-block-settings-menu__block-transformations">
+		{ getPossibleBlockTransformations( blocks ).map( ( { name, title, icon } ) => {
+			const shownText = sprintf( __( 'Turn into %s' ), title );
+			return <IconButton
+				key={ `transform-${ name } ` }
+				className="editor-block-settings-menu__control"
+				onClick={ ( event ) => {
+					onTransform( blocks, name );
+					onClick( event );
+				} }
+				icon={ icon }
+				label={ small ? shownText : undefined }
+			>
+				{ ! small && shownText }
+			</IconButton>;
+		} ) }
+	</div>;
 }
 
 export default connect(
