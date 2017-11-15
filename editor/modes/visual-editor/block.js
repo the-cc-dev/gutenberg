@@ -11,6 +11,7 @@ import { get, partial, reduce, size } from 'lodash';
 import { Component, createElement } from '@wordpress/element';
 import { keycodes } from '@wordpress/utils';
 import { getBlockType, BlockEdit, getBlockDefaultClassname, createBlock } from '@wordpress/blocks';
+import { withFilters } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
@@ -411,7 +412,7 @@ class VisualEditorBlock extends Component {
 	}
 }
 
-export default connect(
+export default withFilters( 'VisualEditorBlock' )( connect(
 	( state, ownProps ) => {
 		return {
 			previousBlock: getPreviousBlock( state, ownProps.uid ),
@@ -487,4 +488,4 @@ export default connect(
 			dispatch( editPost( { meta } ) );
 		},
 	} )
-)( VisualEditorBlock );
+)( VisualEditorBlock ) );
