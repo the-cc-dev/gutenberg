@@ -29,9 +29,20 @@ import ContrastChecker from '../../contrast-checker';
 
 const { getComputedStyle } = window;
 
+const ContrastCheckerWithFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
+	const { textColor, backgroundColor } = ownProps;
+	const computedStyles = ( ! textColor || ! backgroundColor ) ? getComputedStyle( node.querySelector( '[contenteditable="true"]' ) ) : null;
+	return {
+		fallbackBackgroundColor: backgroundColor ? undefined : computedStyles.backgroundColor,
+		fallbackTextColor: textColor ? undefined : computedStyles.color,
+	};
+} )( ContrastChecker );
+
 class ParagraphBlock extends Component {
 	constructor() {
 		super( ...arguments );
+		this.nodeRef = null;
+		this.bindRef = this.bindRef.bind( this );
 		this.toggleDropCap = this.toggleDropCap.bind( this );
 	}
 
@@ -40,13 +51,18 @@ class ParagraphBlock extends Component {
 		setAttributes( { dropCap: ! attributes.dropCap } );
 	}
 
+	bindRef( node ) {
+		if ( ! node ) {
+			return;
+		}
+		this.nodeRef = node;
+	}
+
 	render() {
 		const {
 			attributes,
 			setAttributes,
 			insertBlocksAfter,
-			fallbackBackgroundColor,
-			fallbackTextColor,
 			focus,
 			setFocus,
 			mergeBlocks,
@@ -110,10 +126,11 @@ class ParagraphBlock extends Component {
 							onChange={ ( colorValue ) => setAttributes( { textColor: colorValue } ) }
 						/>
 					</PanelColor>
-					<ContrastChecker
-						textColor={ textColor || fallbackTextColor }
-						backgroundColor={ backgroundColor || fallbackBackgroundColor }
-						isLargeText={ true }
+					<ContrastCheckerWithFallbackStyles
+						node={ this.nodeRef }
+						textColor={ textColor }
+						backgroundColor={ backgroundColor }
+						isLargeText={ fontSize >= 18 }
 					/>
 					<PanelBody title={ __( 'Block Alignment' ) }>
 						<BlockAlignmentToolbar
@@ -123,60 +140,53 @@ class ParagraphBlock extends Component {
 					</PanelBody>
 				</InspectorControls>
 			),
-			<Autocomplete key="editable" completers={ [
-				blockAutocompleter( { onReplace } ),
-				userAutocompleter(),
-			] }>
-				{ ( { isExpanded, listBoxId, activeId } ) => (
-					<Editable
-						tagName="p"
-						className={ classnames( 'wp-block-paragraph', className, {
-							[ `align${ width }` ]: width,
-							'has-background': backgroundColor,
-						} ) }
-						style={ {
-							backgroundColor: backgroundColor,
-							color: textColor,
-							fontSize: fontSize ? fontSize + 'px' : undefined,
-							textAlign: align,
-						} }
-						value={ content }
-						onChange={ ( nextContent ) => {
-							setAttributes( {
-								content: nextContent,
-							} );
-						} }
-						focus={ focus }
-						onFocus={ setFocus }
-						onSplit={ ( before, after, ...blocks ) => {
-							setAttributes( { content: before } );
-							insertBlocksAfter( [
-								...blocks,
-								createBlock( 'core/paragraph', { content: after } ),
-							] );
-						} }
-						onMerge={ mergeBlocks }
-						onReplace={ onReplace }
-						placeholder={ placeholder || __( 'Add text or type / to insert content' ) }
-						aria-autocomplete="list"
-						aria-expanded={ isExpanded }
-						aria-owns={ listBoxId }
-						aria-activedescendant={ activeId }
-					/>
-				) }
-			</Autocomplete>,
+			<div key="editable" ref={ this.bindRef }>
+				<Autocomplete completers={ [
+					blockAutocompleter( { onReplace } ),
+					userAutocompleter(),
+				] }>
+					{ ( { isExpanded, listBoxId, activeId } ) => (
+						<Editable
+							tagName="p"
+							className={ classnames( 'wp-block-paragraph', className, {
+								[ `align${ width }` ]: width,
+								'has-background': backgroundColor,
+							} ) }
+							style={ {
+								backgroundColor: backgroundColor,
+								color: textColor,
+								fontSize: fontSize ? fontSize + 'px' : undefined,
+								textAlign: align,
+							} }
+							value={ content }
+							onChange={ ( nextContent ) => {
+								setAttributes( {
+									content: nextContent,
+								} );
+							} }
+							focus={ focus }
+							onFocus={ setFocus }
+							onSplit={ ( before, after, ...blocks ) => {
+								setAttributes( { content: before } );
+								insertBlocksAfter( [
+									...blocks,
+									createBlock( 'core/paragraph', { content: after } ),
+								] );
+							} }
+							onMerge={ mergeBlocks }
+							onReplace={ onReplace }
+							placeholder={ placeholder || __( 'Add text or type / to insert content' ) }
+							aria-autocomplete="list"
+							aria-expanded={ isExpanded }
+							aria-owns={ listBoxId }
+							aria-activedescendant={ activeId }
+						/>
+					) }
+				</Autocomplete>
+			</div>,
 		];
 	}
 }
-
-const ParagraphBlockFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
-	const { textColor, backgroundColor } = ownProps.attributes;
-	const computedStyles = ( ! textColor || ! backgroundColor ) ? getComputedStyle( node.querySelector( '[contenteditable="true"]' ) ) : null;
-	return {
-		fallbackBackgroundColor: backgroundColor ? undefined : computedStyles.backgroundColor,
-		fallbackTextColor: textColor ? undefined : computedStyles.color,
-	};
-} )( ParagraphBlock );
 
 registerBlockType( 'core/paragraph', {
 	title: __( 'Paragraph' ),
@@ -245,9 +255,7 @@ registerBlockType( 'core/paragraph', {
 		}
 	},
 
-	edit( props ) {
-		return <ParagraphBlockFallbackStyles { ...props } />;
-	},
+	edit: ParagraphBlock,
 
 	save( { attributes } ) {
 		const { width, align, content, dropCap, backgroundColor, textColor, fontSize } = attributes;
