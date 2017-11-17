@@ -483,7 +483,10 @@ export function blockInsertionPoint( state = {}, action ) {
 export function preferences( state = PREFERENCES_DEFAULTS, action ) {
 	switch ( action.type ) {
 		case 'TOGGLE_SIDEBAR':
-			return {
+			return action.isMobile ? {
+				...state,
+				isSidebarOpenedMobile: ! state.isSidebarOpenedMobile,
+			} : {
 				...state,
 				isSidebarOpened: ! state.isSidebarOpened,
 			};
