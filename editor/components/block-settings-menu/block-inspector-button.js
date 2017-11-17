@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flow, noop } from 'lodash';
+import { flow, noop, partial } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -46,13 +46,21 @@ export function BlockInspectorButton( {
 export default connect(
 	( state ) => ( {
 		isSidebarOpened: isEditorSidebarOpened( state ),
+		isMobile: ! state.responsive.greaterThan.medium,
 	} ),
 	( dispatch ) => ( {
 		onShowInspector() {
 			dispatch( setActivePanel( 'block' ) );
 		},
-		onToggleSidebar() {
-			dispatch( toggleSidebar() );
+		onToggleSidebar( isMobile = false ) {
+			dispatch( toggleSidebar( isMobile ) );
 		},
+	} ),
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		onToggleSidebar: partial( dispatchProps.onToggleSidebar, stateProps.isMobile ),
 	} )
+
 )( BlockInspectorButton );

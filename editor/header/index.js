@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { partial } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -49,8 +50,15 @@ function Header( { onToggleSidebar, isSidebarOpened } ) {
 export default connect(
 	( state ) => ( {
 		isSidebarOpened: isEditorSidebarOpened( state ),
+		isMobile: ! state.responsive.greaterThan.medium,
 	} ),
 	( dispatch ) => ( {
-		onToggleSidebar: () => dispatch( toggleSidebar() ),
+		onToggleSidebar: ( isMobile = false ) => dispatch( toggleSidebar( isMobile ) ),
+	} ),
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		onToggleSidebar: partial( dispatchProps.onToggleSidebar, stateProps.isMobile ),
 	} )
 )( Header );

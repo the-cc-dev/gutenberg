@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { partial } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -48,9 +49,16 @@ export default connect(
 	( state ) => ( {
 		panel: getActivePanel( state ),
 		count: getSelectedBlockCount( state ),
+		isMobile: ! state.responsive.greaterThan.medium,
 	} ),
 	( dispatch ) => ( {
 		onSetPanel: ( panel ) => dispatch( setActivePanel( panel ) ),
-		onToggleSidebar: () => dispatch( toggleSidebar() ),
+		onToggleSidebar: ( isMobile = false ) => dispatch( toggleSidebar( isMobile ) ),
+	} ),
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		onToggleSidebar: partial( dispatchProps.onToggleSidebar, stateProps.isMobile ),
 	} )
 )( SidebarHeader );
