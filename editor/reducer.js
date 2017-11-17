@@ -32,6 +32,14 @@ import { getBlockTypes, getBlockType } from '@wordpress/blocks';
 import withHistory from './utils/with-history';
 import withChangeDetection from './utils/with-change-detection';
 import { PREFERENCES_DEFAULTS } from './store-defaults';
+import {
+	BREAK_HUGE,
+	BREAK_WIDE,
+	BREAK_LARGE,
+	BREAK_MEDIUM,
+	BREAK_SMALL,
+	BREAK_MOBILE,
+} from './constants';
 
 /***
  * Module constants
@@ -670,10 +678,12 @@ export function metaBoxes( state = defaultMetaBoxState, action ) {
 
 // Create responsive reducer with lib default breakpoints excluding small where we are currently using 782.
 const responsive = createResponsiveStateReducer( {
-	extraSmall: 480,
-	small: 782,
-	medium: 992,
-	large: 1200,
+	mobile: BREAK_MOBILE,
+	small: BREAK_SMALL,
+	medium: BREAK_MEDIUM,
+	large: BREAK_LARGE,
+	wide: BREAK_WIDE,
+	huge: BREAK_HUGE,
 } );
 export const reusableBlocks = combineReducers( {
 	data( state = {}, action ) {
