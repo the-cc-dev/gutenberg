@@ -9,12 +9,12 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { Component, createElement, renderToString, cloneElement, Children } from '@wordpress/element';
+import { applyFilters } from '@wordpress/utils';
 
 /**
  * Internal dependencies
  */
 import { getBlockType, getUnknownTypeHandlerName } from './registration';
-import { applyFilters } from '../hooks';
 
 /**
  * Returns the block's default classname from its name
