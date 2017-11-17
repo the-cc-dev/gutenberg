@@ -125,7 +125,9 @@ export function getPreference( state, preferenceKey, defaultValue ) {
  * @return {Boolean}       Whether sidebar is open
  */
 export function isEditorSidebarOpened( state ) {
-	return getPreference( state, 'isSidebarOpened' );
+	return state.responsive.greaterThan.medium ?
+		getPreference( state, 'isSidebarOpened' ) :
+		getPreference( state, 'isSidebarOpenedMobile' );
 }
 
 /**
