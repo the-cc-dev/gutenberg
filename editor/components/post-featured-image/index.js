@@ -18,14 +18,16 @@ import './style.scss';
 import { getEditedPostAttribute } from '../../selectors';
 import { editPost } from '../../actions';
 
-const FEATURED_IMAGE_SELECT_TITLE = __( 'Select a Featured Image' );
-
-function PostFeaturedImage( { featuredImageId, onUpdateImage, onRemoveImage, media } ) {
+function PostFeaturedImage( { featuredImageId, onUpdateImage, onRemoveImage, media, postType } ) {
+	if ( ! postType.data ) {
+		return null;
+	}
+	const postLabel = postType.data.labels;
 	return (
 		<div className="editor-post-featured-image">
 			{ !! featuredImageId &&
 				<MediaUploadButton
-					title={ FEATURED_IMAGE_SELECT_TITLE }
+					title={ postLabel.set_featured_image }
 					buttonProps={ { className: 'button-link editor-post-featured-image__preview' } }
 					onSelect={ onUpdateImage }
 					type="image"
@@ -48,17 +50,17 @@ function PostFeaturedImage( { featuredImageId, onUpdateImage, onRemoveImage, med
 			}
 			{ ! featuredImageId &&
 				<MediaUploadButton
-					title={ FEATURED_IMAGE_SELECT_TITLE }
+					title={ postLabel.set_featured_image }
 					buttonProps={ { className: 'editor-post-featured-image__toggle button-link' } }
 					onSelect={ onUpdateImage }
 					type="image"
 				>
-					{ __( 'Set featured image' ) }
+					{ postLabel.set_featured_image }
 				</MediaUploadButton>
 			}
 			{ !! featuredImageId &&
 				<Button className="editor-post-featured-image__toggle button-link" onClick={ onRemoveImage }>
-					{ __( 'Remove featured image' ) }
+					{ postLabel.remove_featured_image }
 				</Button>
 			}
 		</div>
@@ -88,6 +90,7 @@ const applyWithAPIData = withAPIData( ( { featuredImageId } ) => {
 
 	return {
 		media: `/wp/v2/media/${ featuredImageId }`,
+		postType: '/wp/v2/types/post?context=edit',
 	};
 } );
 
