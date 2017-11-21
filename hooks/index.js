@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import createHooks from '@wordpress/hooks';
 
@@ -38,3 +38,5 @@ export {
 	hasAction,
 	hasFilter,
 };
+
+export default createHooks;

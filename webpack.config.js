@@ -49,6 +49,7 @@ const entryPointNames = [
 	'date',
 	'editor',
 	'element',
+	'hooks',
 	'i18n',
 	'utils',
 ];
@@ -62,7 +63,8 @@ const externals = {
 };
 
 entryPointNames.forEach( entryPointName => {
-	externals[ '@wordpress/' + entryPointName ] = {
+	const namespace = entryPointName === 'hooks' ? 'wpcore' : 'wordpress';
+	externals[ `@${ namespace }/${ entryPointName }` ] = {
 		this: [ 'wp', entryPointName ],
 	};
 } );

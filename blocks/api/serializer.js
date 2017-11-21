@@ -9,7 +9,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { Component, createElement, renderToString, cloneElement, Children } from '@wordpress/element';
-import { applyFilters } from '@wordpress/utils';
+import { applyFilters } from '@wpcore/hooks';
 
 /**
  * Internal dependencies

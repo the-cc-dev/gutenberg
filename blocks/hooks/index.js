@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { addFilter } from '@wordpress/utils';
+import { addFilter } from '@wpcore/hooks';
 
 /**
  * Internal dependencies

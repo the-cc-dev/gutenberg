@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { wrapperDisplayName } from '@wordpress/element';
-import { applyFilters } from '@wordpress/utils';
+import { applyFilters } from '@wpcore/hooks';
 
 /**
  * Creates a higher-order component which adds filtering capability to the wrapped component.
