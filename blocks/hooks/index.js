@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { addFilter } from '@wpcore/hooks';
+import createHooks from '@wpcore/hooks';
 
 /**
  * Internal dependencies
@@ -10,7 +10,27 @@ import anchor from './anchor';
 import customClassName from './custom-class-name';
 import matchers from './matchers';
 
-const hooks = { addFilter };
+const hooks = createHooks();
+
+const {
+	addFilter,
+	removeFilter,
+	removeAllFilters,
+	applyFilters,
+	doingFilter,
+	didFilter,
+	hasFilter,
+} = hooks;
+
+export {
+	addFilter,
+	removeFilter,
+	removeAllFilters,
+	applyFilters,
+	doingFilter,
+	didFilter,
+	hasFilter,
+};
 
 anchor( hooks );
 customClassName( hooks );

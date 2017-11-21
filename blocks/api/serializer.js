@@ -9,11 +9,11 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { Component, createElement, renderToString, cloneElement, Children } from '@wordpress/element';
-import { applyFilters } from '@wpcore/hooks';
 
 /**
  * Internal dependencies
  */
+import { applyFilters } from '../hooks';
 import { getBlockType, getUnknownTypeHandlerName } from './registration';
 
 /**

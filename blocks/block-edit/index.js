@@ -1,11 +1,7 @@
 /**
- * WordPress dependencies
- */
-import { applyFilters } from '@wpcore/hooks';
-
-/**
  * Internal dependencies
  */
+import { applyFilters } from '../hooks';
 import { getBlockType } from '../api';
 
 function BlockEdit( props ) {

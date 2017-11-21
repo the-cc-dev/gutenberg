@@ -8,11 +8,11 @@ import { get, isFunction, some } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { applyFilters } from '@wpcore/hooks';
 
 /**
  * Internal dependencies
  */
+import { applyFilters } from '../hooks';
 import { getCategories } from './categories';
 
 /**
