@@ -15,11 +15,11 @@ import { MediaUploadButton } from '@wordpress/blocks';
  * Internal dependencies
  */
 import './style.scss';
-import { getEditedPostAttribute } from '../../selectors';
+import { getCurrentPostType, getEditedPostAttribute } from '../../selectors';
 import { editPost } from '../../actions';
 
 function PostFeaturedImage( { featuredImageId, onUpdateImage, onRemoveImage, media, postType } ) {
-	if ( ! postType.data ) {
+	if ( ! postType || ! postType.data ) {
 		return null;
 	}
 	const postLabel = postType.data.labels;
@@ -71,6 +71,7 @@ const applyConnect = connect(
 	( state ) => {
 		return {
 			featuredImageId: getEditedPostAttribute( state, 'featured_media' ),
+			postTypeName: getCurrentPostType( state ),
 		};
 	},
 	{
@@ -83,14 +84,10 @@ const applyConnect = connect(
 	}
 );
 
-const applyWithAPIData = withAPIData( ( { featuredImageId } ) => {
-	if ( ! featuredImageId ) {
-		return {};
-	}
-
+const applyWithAPIData = withAPIData( ( { featuredImageId, postTypeName } ) => {
 	return {
-		media: `/wp/v2/media/${ featuredImageId }`,
-		postType: '/wp/v2/types/post?context=edit',
+		media: featuredImageId ? `/wp/v2/media/${ featuredImageId }` : undefined,
+		postType: postTypeName ? `/wp/v2/types/${ postTypeName }?context=edit` : undefined,
 	};
 } );
 
