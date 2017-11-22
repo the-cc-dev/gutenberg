@@ -33,7 +33,7 @@ export default function( HTML ) {
 
 			const attributes = mapValues(
 				pickBy( transform.attributes, ( schema ) => schema.shortcode ),
-				( schema ) => schema.shortcode( match.shortcode.attrs ),
+				( schema ) => schema.shortcode( match.shortcode.attrs, match ),
 			);
 
 			const block = createBlock(
