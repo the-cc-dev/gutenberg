@@ -252,11 +252,15 @@ export default class Editable extends Component {
 		}
 
 		this.pastedPlainText = dataTransfer ? dataTransfer.getData( 'text/plain' ) : '';
+		this.isPlainTextPaste = ( dataTransfer &&
+			dataTransfer.types.length === 1 &&
+			dataTransfer.types[ 0 ] === 'text/plain' );
 	}
 
 	onPastePreProcess( event ) {
+		const HTML = this.isPlainTextPaste ? this.pastedPlainText : event.content;
 		// Allows us to ask for this information when we get a report.
-		window.console.log( 'Received HTML:\n\n', this.pastedContent || event.content );
+		window.console.log( 'Received HTML:\n\n', this.pastedContent || HTML );
 		window.console.log( 'Received plain text:\n\n', this.pastedPlainText );
 
 		// There is a selection, check if a link is pasted.
@@ -292,7 +296,7 @@ export default class Editable extends Component {
 		}
 
 		const content = rawHandler( {
-			HTML: this.pastedContent || event.content,
+			HTML: this.pastedContent || HTML,
 			plainText: this.pastedPlainText,
 			mode,
 		} );
