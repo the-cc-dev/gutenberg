@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import NavigableToolbar from '../../navigable-toolbar';
+import NavigableToolbar from '../navigable-toolbar';
 import { BlockToolbar } from '../';
 import { isFeatureActive } from '../../selectors';
 
