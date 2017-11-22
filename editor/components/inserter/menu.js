@@ -199,6 +199,8 @@ export class InserterMenu extends Component {
 			<InserterGroup blockTypes={ blockTypesInfo } labelledBy={ labelledBy }
 				bindReferenceNode={ this.bindReferenceNode }
 				selectBlock={ this.selectBlock }
+				showInsertionPoint={ this.props.showInsertionPoint }
+				hideInsertionPoint={ this.props.hideInsertionPoint }
 			/>
 		);
 	}
