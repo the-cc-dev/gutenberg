@@ -22,7 +22,7 @@ function FeatureToggle( { onToggle, active } ) {
 		>
 			<MenuItemsToggle
 				label={ __( 'Fix toolbar to block' ) }
-				isSelected={ active }
+				isSelected={ ! active }
 				onClick={ onToggle }
 			/>
 		</MenuItemsGroup>
